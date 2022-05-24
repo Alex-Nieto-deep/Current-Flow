@@ -10,10 +10,10 @@ app = Flask(__name__)
 bootstrap = Bootstrap(app)
 
 mysql = MySQL()
-app.config['MYSQL_DATABASE_HOST'] = config('HOST')
+app.config['MYSQL_DATABASE_HOST'] = config('HOST_DB')
 app.config['MYSQL_DATABASE_USER'] = config('USER_DB')
 app.config['MYSQL_DATABASE_PASSWORD'] = config('PASSWORD_DB')
-app.config['MYSQL_DATABASE_DB'] = config('NAME_DB')
+app.config['MYSQL_DATABASE_DB'] = config('DATABASE')
 mysql.init_app(app)
 
 
@@ -28,6 +28,7 @@ def _datos(cur):
         json_data = json.dumps(
             {'fecha':  datetime.now().strftime("%d/%m/%Y %H:%M:%S"), 'numero1': 0})
     yield f"data:{json_data}\n\n"
+
 
 @app.route('/')
 def index():
@@ -44,13 +45,12 @@ def graficas():
     cur.execute(
         "SELECT  maximo_flujo, fecha FROM datos_semana")
     flujo_semana = cur.fetchall()
-    
+
     cur.execute(
         "SELECT maximo_flujo FROM datos_semana WHERE week(fecha)=week(now())")
     flujo_semana_actual = cur.fetchall()
     print(flujo_semana_actual)
-    
-    
+
     return render_template('graficas.html', graficas="active",
                            flujo_dia=flujo_dia, flujo_semana=flujo_semana,
                            flujo_semana_actual=flujo_semana_actual)
@@ -64,13 +64,15 @@ def tablas():
     valores = cur.fetchall()
     return render_template('tablas.html', tablas="active", valores=valores)
 
+
 @app.route('/flujo_tiempo_real')
 def flujo_tiempo_real():
     cur = mysql.get_db().cursor()
-    
+
     enviar = _datos(cur)
-    
+
     return Response(stream_with_context(enviar), mimetype='text/event-stream')
+
 
 @app.route('/predicciones')
 def predicciones():
