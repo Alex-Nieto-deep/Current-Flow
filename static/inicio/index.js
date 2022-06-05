@@ -5,13 +5,14 @@ $(document).ready(function () {
     const plugin = {
         id: 'custom_canvas_background_color',
         beforeDraw: (chart) => {
-          const ctx = chart.canvas.getContext('2d');
-          ctx.save();
-          ctx.globalCompositeOperation = 'destination-over';
-          ctx.fillStyle = 'rgb(239,239,239)';
-          ctx.fillRect(0, 0, chart.width, chart.height);
-          ctx.restore();  }
-      };
+            const ctx = chart.canvas.getContext('2d');
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'rgb(239,239,239)';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
 
     const config = {
         type: 'line',
@@ -54,7 +55,7 @@ $(document).ready(function () {
                     display: true,
                     scaleLabel: {
                         display: true,
-                        labelString: 'Flujo de agua (L/min)'
+                        labelString: 'Flujo de corriente'
                     }
                 }]
             }
@@ -77,7 +78,7 @@ $(document).ready(function () {
 
         config.data.labels.push(data.fecha);
         config.data.datasets[0].data.push(data.numero1);
-        document.getElementById("flujo").innerHTML=data.numero1 + " L/min";
+        document.getElementById("flujo").innerHTML = data.numero1;
         lineChart.update();
     }
 });
